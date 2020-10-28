@@ -21,6 +21,7 @@ void dfs(Bst_Tree* root)
 int main()
 {
     vector<int> v = {1, 2, 3, 4, 5, 6, 7, 8};
+    int pre = -32767;
     Bst_Tree *root;
     Create(v, root);
     dfs(root);
@@ -29,7 +30,11 @@ int main()
     visit(FindMin(root));
     visit(FindMax(root));
     visit(Find(8, root));
-    cout << Height(root);
+    cout << Height(root) << ' ';
+    cout << judge(root, pre) << ' ';
+    cout << mylevel(root, 8, 1) << ' ';
+    cout << level(root, root->right->right) << ' ';
+
 
     cout << endl;
     system("pause");

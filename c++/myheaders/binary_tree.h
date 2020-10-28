@@ -791,3 +791,9 @@ int wangdao5_19(Binary_Tree<E>* root, int &sum){
     wangdao5_19(root->left, sum + root->val);
     wangdao5_19(root->right, sum + root->val);
 }
+
+/* 判断二叉树是否是平衡二叉树 */
+// template<class E>
+// bool is_avltree(Binary_Tree<E>* root){
+
+// }
