@@ -45,7 +45,7 @@ void insert_sort_clean(int a[], int n)
 void insert_sort_bin(int a[], int n)
 {
     int i, j, low, high, mid;
-    
+
     for (int i = 1; i < n; i++)
     {
         int tmp = a[i];
@@ -93,16 +93,16 @@ void shell_sort_clean(int a[], int n)
     int i, j, Increment;
     int tmp;
 
-    for(Increment = n / 2; Increment > 0; Increment / 2)
+    for (Increment = n / 2; Increment > 0; Increment / 2)
     {
-        for(i = Increment; i < n; i++)
+        for (i = Increment; i < n; i++)
         {
             tmp = a[i];
-            for(j = i; j >= Increment; j -= Increment)
+            for (j = i; j >= Increment; j -= Increment)
             {
-                if(tmp < a[j - Increment])
+                if (tmp < a[j - Increment])
                     a[j] = a[j - Increment];
-                else 
+                else
                     break;
             }
         }
@@ -130,18 +130,123 @@ void bubble_sort(int a[], int n)
 
 void bubble_sort_clean(int a[], int n)
 {
-    bool swapped;
-    do
+    int i, j;
+    bool flag = true;
+    for (i = 1; i < n && flag; i++) /* 如果flag为true则退出循环 */
     {
-        swapped = false;
-        for (int i = 0; i < n - 1; i++)
+        flag = false; /* 初始为false */
+        for (j = n - 1; j > i; j--)
         {
-            if (a[i] > a[i + 1])
+            if (a[j - 1] > a[j])
             {
-                swap(a[i], a[i + 1]);
-                swapped = true;
+                swap(a[j - 1], a[j]);
+                flag = true; /* 如果有数据交换，则flag为true */
             }
         }
-    } while (swapped);
+    }
+}
+
+void bubble_sort_init1(int a[], int n)
+{
+    int i, j;
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = i + 1; j < n; j++)
+        {
+            if (a[i] > a[j])
+                swap(a[i], a[j]);
+        }
+    }
+}
+
+void bubble_sort_init2(int a[], int n)
+{
+    int i, j;
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = n - 2; j >= i; j--)
+        {
+            if (a[j] > a[j + 1])
+            {
+                swap(a[j], a[j + 1]);
+            }
+        }
+    }
+}
+
+int partition(int a[], int low, int high)
+{
+    int pivotkey;
+    int mid = low + (high - low) / 2;
+
+    /* 着重分析一下三数排序。（先确定最小值，剩下两个一比较就能确定第二大还是第三大了）
+    核心思想是先通过a[mid]和a[low]，a[mid]和a[high]的比较和交换,使a[mid]是三数中最小值
+    最后只需要比较a[low]和a[high]，把较小的值放在a[low]，三个数大小顺序就是2，1，3
+    */
+    if(a[mid] > a[low])
+        swap(a[mid], a[low]);
+    if(a[mid] > a[high])
+        swap(a[mid], a[high]);
+    if(a[low] > a[high])
+        swap(a[low], a[high]);
+
+    pivotkey = a[low];      /* 用子表的第一个记录作枢纽记录 */
+    while(low < high)       /* 从表的两端交替向中间扫描 */
+    {
+        while(low < high && a[high] >= pivotkey)    
+            high--;
+        swap(a[low], a[high]);      /* 将比枢纽记录小的记录交换到低端 */
+        while(low < high && a[low] <= pivotkey)     
+            low++;
+        swap(a[low], a[high]);      /* 将比枢纽记录大的记录交换到高端 */
+    }
+    /* 终止条件是low == high，因为所有的循环都判断low < high */
+
+    return low;                     /* 返回枢纽所在位置 */
+}
+
+int partition_optimize(int a[], int low, int high)
+{
+    int pivotkey;
+    int tmp;
+    int mid = low + (high - low) / 2;
+
+    if(a[mid] > a[low])
+        swap(a[mid], a[low]);
+    if(a[mid] > a[high])
+        swap(a[mid], a[high]);
+    if(a[low] > a[high])
+        swap(a[low], a[high]);
+
+    pivotkey = a[low];      /* 用子表的第一个记录作枢纽记录 */
+    tmp = pivotkey;
+    while(low < high)       /* 从表的两端交替向中间扫描 */
+    {
+        while(low < high && a[high] >= pivotkey)    
+            high--;
+        a[low] = a[high];
+        while(low < high && a[low] <= pivotkey)     
+            low++;
+        a[high] = a[low];
+    }
+    a[low] = tmp;
+    return low;     /* 返回枢纽所在位置 */
+}
+
+void qsort(int a[], int low, int high)
+{
+    int pivot;
+    if(low < high)
+    {
+        pivot = partition_optimize(a, low ,high);
+
+        qsort(a, low, pivot - 1);
+        qsort(a, pivot + 1, high);
+    }
+}
+
+void quick_sort(int a[], int n)
+{
+    qsort(a, 0, n - 1);
 }
 
