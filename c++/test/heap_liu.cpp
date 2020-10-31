@@ -1,5 +1,5 @@
 #include <iostream>
-#include "../myheaders/heap.h"
+#include "../myheaders/heap_liu.h"
 
 using namespace std;
 
@@ -12,7 +12,7 @@ void visit(E e)
 int main()
 {
     int a[] = {9,8,7,6,5,4,3,2,1};
-    auto heap = new Heap<int>(9, a);
+    auto heap = new Heap<int>(20, a);
     heap->show(visit);
     cout << endl;
 
