@@ -266,3 +266,32 @@ void select_sort(int a[], int n)
     }
 }
 
+// Ë«ÏòÃ°ÅÝÅÅÐò
+void wangdao8_2(int a[], int n)
+{
+    int i;
+    int low = 0, high = n-1;
+    bool flag = true;
+    while(low < high && flag)
+    {
+        flag = false;
+        for(i = low; i < high; i++)
+        {
+            if(a[i] > a[i+1])
+            {
+                swap(a[i], a[i+1]);
+                flag = true;
+            }
+        }
+        high--;
+        for(i = high; i > low; i--)
+        {
+            if(a[i] < a[i-1])
+            {
+                swap(a[i], a[i-1]);
+                flag = true;
+            }
+        }
+        low++;
+    }
+}
