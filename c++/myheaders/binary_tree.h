@@ -37,11 +37,13 @@ void visit(Binary_Tree<E> *p)
     cout << p->val << " ";
 }
 
-//总结一下，对于非递归实现树的遍历，前中后都需要使用栈，层次遍历使用队列
-//栈大体有两种用途：
-//1.保存dfs路径上的所有节点，在遍历到叶子节点时可以通过s.top()回溯，然后自底向上将所有节点访问。
-//2.保存dfs路径上的所有尚未访问的岔路口，在dfs遍历过程中，如果有岔路口就加到栈里，在遍历到叶子节点时可以通过s.top()回溯，直接转到最后一个未访问的岔路口。
-//3.保存访问结果，用于反转。
+/* 
+总结一下，对于非递归实现树的遍历，前中后都需要使用栈，层次遍历使用队列
+栈大体有两种用途：
+1.保存dfs路径上的所有节点，在遍历到叶子节点时可以通过s.top()回溯，然后自底向上将所有节点访问。
+2.保存dfs路径上的所有尚未访问的岔路口，在dfs遍历过程中，如果有岔路口就加到栈里，在遍历到叶子节点时可以通过s.top()回溯，直接转到最后一个未访问的岔路口。
+3.保存访问结果，用于反转。
+*/
 
 template <class E>
 void preorder(void (*visit)(Binary_Tree<E> *), Binary_Tree<E> *root)
@@ -434,8 +436,8 @@ Binary_Tree<E> *wangdao5_6(vector<E> preorder, vector<E> inorder)
 
 //5.7
 
-//判断二叉树是否是完全二叉树
 /* 
+判断二叉树是否是完全二叉树
 1>如果树为空，则直接返回错 
 2>如果树不为空：层序遍历二叉树 
 2.1>如果一个节点左右孩子都不为空，则pop该节点，将其左右孩子入队列； 
@@ -791,9 +793,3 @@ int wangdao5_19(Binary_Tree<E>* root, int &sum){
     wangdao5_19(root->left, sum + root->val);
     wangdao5_19(root->right, sum + root->val);
 }
-
-/* 判断二叉树是否是平衡二叉树 */
-// template<class E>
-// bool is_avltree(Binary_Tree<E>* root){
-
-// }

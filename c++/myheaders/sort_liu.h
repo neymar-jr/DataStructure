@@ -9,7 +9,7 @@ void swap(int &a, int &b)
 }
 
 void insert_sort(int a[], int n)
-{                               /* mark first element as sorted */
+{   /* mark first element as sorted */
     for (int i = 1; i < n; i++) /* for each unsorted element tmp */
     {
         // 若第i个元素大于i-1元素，不用处理，直接放在有序序列最后
@@ -183,26 +183,26 @@ int partition(int a[], int low, int high)
     核心思想是先通过a[mid]和a[low]，a[mid]和a[high]的比较和交换,使a[mid]是三数中最小值
     最后只需要比较a[low]和a[high]，把较小的值放在a[low]，三个数大小顺序就是2，1，3
     */
-    if(a[mid] > a[low])
+    if (a[mid] > a[low])
         swap(a[mid], a[low]);
-    if(a[mid] > a[high])
+    if (a[mid] > a[high])
         swap(a[mid], a[high]);
-    if(a[low] > a[high])
+    if (a[low] > a[high])
         swap(a[low], a[high]);
 
-    pivotkey = a[low];      /* 用子表的第一个记录作枢纽记录 */
-    while(low < high)       /* 从表的两端交替向中间扫描 */
+    pivotkey = a[low]; /* 用子表的第一个记录作枢纽记录 */
+    while (low < high) /* 从表的两端交替向中间扫描 */
     {
-        while(low < high && a[high] >= pivotkey)    
+        while (low < high && a[high] >= pivotkey)
             high--;
-        swap(a[low], a[high]);      /* 将比枢纽记录小的记录交换到低端 */
-        while(low < high && a[low] <= pivotkey)     
+        swap(a[low], a[high]); /* 将比枢纽记录小的记录交换到低端 */
+        while (low < high && a[low] <= pivotkey)
             low++;
-        swap(a[low], a[high]);      /* 将比枢纽记录大的记录交换到高端 */
+        swap(a[low], a[high]); /* 将比枢纽记录大的记录交换到高端 */
     }
     /* 终止条件是low == high，因为所有的循环都判断low < high */
 
-    return low;                     /* 返回枢纽所在位置 */
+    return low; /* 返回枢纽所在位置 */
 }
 
 int partition_optimize(int a[], int low, int high)
@@ -211,34 +211,34 @@ int partition_optimize(int a[], int low, int high)
     int tmp;
     int mid = low + (high - low) / 2;
 
-    if(a[mid] > a[low])
+    if (a[mid] > a[low])
         swap(a[mid], a[low]);
-    if(a[mid] > a[high])
+    if (a[mid] > a[high])
         swap(a[mid], a[high]);
-    if(a[low] > a[high])
+    if (a[low] > a[high])
         swap(a[low], a[high]);
 
-    pivotkey = a[low];      /* 用子表的第一个记录作枢纽记录 */
+    pivotkey = a[low]; /* 用子表的第一个记录作枢纽记录 */
     tmp = pivotkey;
-    while(low < high)       /* 从表的两端交替向中间扫描 */
+    while (low < high) /* 从表的两端交替向中间扫描 */
     {
-        while(low < high && a[high] >= pivotkey)    
+        while (low < high && a[high] >= pivotkey)
             high--;
         a[low] = a[high];
-        while(low < high && a[low] <= pivotkey)     
+        while (low < high && a[low] <= pivotkey)
             low++;
         a[high] = a[low];
     }
     a[low] = tmp;
-    return low;     /* 返回枢纽所在位置 */
+    return low; /* 返回枢纽所在位置 */
 }
 
 void qsort(int a[], int low, int high)
 {
     int pivot;
-    if(low < high)
+    if (low < high)
     {
-        pivot = partition_optimize(a, low ,high);
+        pivot = partition_optimize(a, low, high);
 
         qsort(a, low, pivot - 1);
         qsort(a, pivot + 1, high);
@@ -248,5 +248,21 @@ void qsort(int a[], int low, int high)
 void quick_sort(int a[], int n)
 {
     qsort(a, 0, n - 1);
+}
+
+void select_sort(int a[], int n)
+{
+    int i, j, min;
+    for (i = 0; i < n; i++)
+    {
+        min = i;
+        for (j = i + 1; j < n; j++)
+        {
+            if (a[j] < min)
+                min = j;
+        }
+        if (i != min)
+            swap(a[i], a[min]);
+    }
 }
 
