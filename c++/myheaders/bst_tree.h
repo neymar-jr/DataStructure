@@ -244,7 +244,7 @@ int level(Bst_Tree *root, Bst_Tree *p)
         {
             cur = cur->left;
             n++;
-        }
+        } 
         else if (p->val > cur->val)
         {
             cur = cur->right;
