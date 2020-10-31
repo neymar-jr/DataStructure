@@ -9,7 +9,7 @@ void swap(int &a, int &b)
 }
 
 void insert_sort(int a[], int n)
-{   /* mark first element as sorted */
+{                               /* mark first element as sorted */
     for (int i = 1; i < n; i++) /* for each unsorted element tmp */
     {
         // 若第i个元素大于i-1元素，不用处理，直接放在有序序列最后
@@ -266,32 +266,107 @@ void select_sort(int a[], int n)
     }
 }
 
+void BuildMaxHeap(int a[], int n)
+{
+    for (int i = n / 2; i > 0; i++) // 对有孩子节点的节点调整
+    {
+        HeapAdjust(a, i, n);
+    }
+}
+
+void HeapAdjust(int a[], int k, int n) // 将元素k为根的子树进行调整
+{
+    a[0] = a[k];
+    for (int i = 2 * k; i <= n; i *= 2)
+    {
+        if (i < n && a[i] < a[i + 1])
+            i++;
+        if (a[0] >= a[i]) // 已经是大根堆，无需调整
+            break;
+        else
+        {
+            a[k] = a[i];
+            k = i;
+        }
+    }
+    a[k] = a[0];
+}
+
+void PercDown(int a[], int i, int n)
+{
+    
+}
+
 // 双向冒泡排序
 void wangdao8_2(int a[], int n)
 {
     int i;
-    int low = 0, high = n-1;
+    int low = 0, high = n - 1;
     bool flag = true;
-    while(low < high && flag)
+    while (low < high && flag)
     {
         flag = false;
-        for(i = low; i < high; i++)
+        for (i = low; i < high; i++)
         {
-            if(a[i] > a[i+1])
+            if (a[i] > a[i + 1])
             {
-                swap(a[i], a[i+1]);
+                swap(a[i], a[i + 1]);
                 flag = true;
             }
         }
         high--;
-        for(i = high; i > low; i--)
+        for (i = high; i > low; i--)
         {
-            if(a[i] < a[i-1])
+            if (a[i] < a[i - 1])
             {
-                swap(a[i], a[i-1]);
+                swap(a[i], a[i - 1]);
                 flag = true;
             }
         }
         low++;
     }
+}
+
+// 把所有奇数移动到所有偶数前边
+// 核心思想：先从前向后找到一个偶数元素，在从后向前找到一个奇数元素，将二者交换，重复直至i >= j
+void wangdao8_3(int a[], int n)
+{
+    int i = 0, j = n - 1;
+    while (i < j)
+    {
+        while (i < j && a[i] % 2 != 0)
+            i++;
+        while (i < j && a[j] % 2 != 1)
+            j--;
+        if (i < j)
+            swap(a[i], a[j]);
+        i++;
+        j--;
+    }
+}
+
+// 找乱序数组中的第k小数
+int wangdao8_6(int a[], int low, int high, int k)
+{
+    int pivot = a[low];
+    int low_temp = low;
+    int high_temp = high;
+    while (low < high)
+    {
+        while (low < high && a[high] >= pivot)
+            --high;
+        a[low] = a[high];
+        while (low < high && a[low] <= pivot)
+            ++low;
+        a[high] = a[low];
+    }
+    // 终止情况下 low == high 都代表pivot应该放在有序数组的位置
+    a[low] = pivot;
+
+    if (low == k)
+        return a[low];
+    else if (low > k)
+        return wangdao8_6(a, low_temp, low - 1, k);
+    else if (low < k)
+        return wangdao8_6(a, low + 1, high_temp, k);
 }
