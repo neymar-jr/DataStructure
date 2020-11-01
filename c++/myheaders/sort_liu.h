@@ -1,4 +1,6 @@
 #include <iostream>
+#define leftchild(i) (2 * (i) + 1)
+#define MAX_SIZE  100
 using namespace std;
 
 void swap(int &a, int &b)
@@ -266,35 +268,102 @@ void select_sort(int a[], int n)
     }
 }
 
-void BuildMaxHeap(int a[], int n)
+// 建大根堆，下滤
+void percdown_maxroot(int a[], int i, int n)
 {
-    for (int i = n / 2; i > 0; i++) // 对有孩子节点的节点调整
+    int child;
+    int tmp;
+    // 从最后一个有孩子的节点开始调整
+    for (tmp = a[i]; leftchild(i) < n; i = child)
     {
-        HeapAdjust(a, i, n);
-    }
-}
-
-void HeapAdjust(int a[], int k, int n) // 将元素k为根的子树进行调整
-{
-    a[0] = a[k];
-    for (int i = 2 * k; i <= n; i *= 2)
-    {
-        if (i < n && a[i] < a[i + 1])
-            i++;
-        if (a[0] >= a[i]) // 已经是大根堆，无需调整
-            break;
+        child = leftchild(i);
+        if (child != n - 1 && a[child + 1] > a[child]) // 双孩子情况下选中较大孩子
+            child++;
+        if (tmp < a[child])
+            a[i] = a[child];
         else
-        {
-            a[k] = a[i];
-            k = i;
-        }
+            break;
     }
-    a[k] = a[0];
+    a[i] = tmp;
 }
 
-void PercDown(int a[], int i, int n)
+// 建小根堆，下滤
+void percdown_minroot(int a[], int i, int n)
 {
-    
+    int child;
+    int tmp;
+    // 从最后一个有孩子的节点开始调整
+    for (tmp = a[i]; leftchild(i) < n; i = child)
+    {
+        child = leftchild(i);
+        if (child != n - 1 && a[child + 1] < a[child]) // 双孩子情况下选中较大孩子
+            child++;
+        if (tmp > a[child])
+            a[i] = a[child];
+        else
+            break;
+    }
+    a[i] = tmp;
+}
+
+void heap_sort(int a[], int n)
+{
+    int i;
+
+    for (i = n / 2 - 1; i >= 0; i--) /* BuildHeap */
+    {
+        percdown_minroot(a, i, n);
+    }
+    for (i = n - 1; i > 0; i--) /* DeleteMax */
+    {
+        swap(a[0], a[i]);
+        percdown_minroot(a, 0, i);
+    }
+}
+
+void merge(int a[], int TmpArray[], int Lpos, int Rpos, int RightEnd)
+{
+    int i, LeftEnd, NumElements, TmpPos;
+
+    LeftEnd = Rpos - 1;
+    TmpPos = Lpos;
+    NumElements = RightEnd - Lpos + 1;
+
+    /* main loop */
+    while(Lpos <= LeftEnd && Rpos <= RightEnd)
+        if(a[Lpos] <= a[Rpos])
+            TmpArray[TmpPos++] = a[Lpos++];
+        else
+            TmpArray[TmpPos++] = a[Rpos++];
+
+        while( Lpos <= LeftEnd )  /* Copy rest of first half */
+            TmpArray[ TmpPos++ ] = a[ Lpos++ ];
+        while( Rpos <= RightEnd ) /* Copy rest of second half */
+            TmpArray[ TmpPos++ ] = a[ Rpos++ ];
+
+        /* Copy TmpArray back */
+        for( i = 0; i < NumElements; i++, RightEnd-- )
+            a[ RightEnd ] = TmpArray[ RightEnd ];
+}
+
+void msort(int a[], int TmpArray[], int left, int right)
+{
+    int center;
+
+    if(left < right)
+    {
+        center = (left + right) / 2;
+        msort(a, TmpArray, left, center);
+        msort(a, TmpArray, center + 1, right);
+        merge(a, TmpArray, left, center + 1, right);
+    }
+}
+
+void merge_sort(int a[], int n)
+{
+    int* TmpArray = new int[MAX_SIZE]; 
+    msort(a, TmpArray, 0, n-1);
+    delete[] TmpArray;
 }
 
 // 双向冒泡排序
@@ -367,6 +436,6 @@ int wangdao8_6(int a[], int low, int high, int k)
         return a[low];
     else if (low > k)
         return wangdao8_6(a, low_temp, low - 1, k);
-    else if (low < k)
+    else
         return wangdao8_6(a, low + 1, high_temp, k);
 }
