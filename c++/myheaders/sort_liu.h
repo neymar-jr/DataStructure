@@ -15,7 +15,7 @@ void insert_sort(int a[], int n)
         // 若第i个元素大于i-1元素，不用处理，直接放在有序序列最后
         if (a[i] < a[i - 1])
         {
-            int tmp = a[i]; /* 'etmptract' the element tmp */
+            int tmp = a[i]; /* 'extract' the element tmp */
             int j = i;
             // 限制边界和比较
             while (j > 0 && a[j - 1] > tmp) /* for j = lastSortedIndetmp down to 0 */
@@ -72,12 +72,12 @@ void shell_sort(int a[], int n)
     // 增量每次都 / 2
     for (int step = n / 2; step > 0; step /= 2)
     {
-        // 从第一个有前驱的增量数组开始遍历，类别插入排序（即step = 1）的跳过0从1开始
+        // 从第一个有前驱的增量数组开始遍历，类似插入排序（即step = 1）的跳过0从1开始
         for (int i = step; i < n; i++) // 注意插入排序就是遍历[1, n-1]从后往前比较后移，最后插入
         {
             int j = i;
             int tmp = a[j];
-
+            // 把插入排序的1换成step
             while (j - step >= 0 && a[j - step] > tmp) // 限制边界和比较
             {
                 a[j] = a[j - step];
@@ -112,10 +112,10 @@ void shell_sort_clean(int a[], int n)
 void bubble_sort(int a[], int n)
 {
     bool flag;
-    for (int i = 0; i < n - 1; i++)
+    for (int i = 0; i < n - 1; i++) /* 每次迭代最小的交换到数组最前面 */
     {
         flag = false;
-        for (int j = n - 1; j > i; j--)
+        for (int j = n - 1; j > i; j--) /* 从后往前比较交换，每次把最小的交换到前面*/
         {
             if (a[j - 1] > a[j])
             {
@@ -123,7 +123,7 @@ void bubble_sort(int a[], int n)
                 flag = true;
             }
         }
-        if (flag == false)
+        if (flag == false) /* 一次迭代后没有交换即已经有序 */
             return;
     }
 }
@@ -132,7 +132,7 @@ void bubble_sort_clean(int a[], int n)
 {
     int i, j;
     bool flag = true;
-    for (i = 1; i < n && flag; i++) /* 如果flag为true则退出循环 */
+    for (i = 0; i < n && flag; i++) /* 如果flag为true则退出循环 */
     {
         flag = false; /* 初始为false */
         for (j = n - 1; j > i; j--)
@@ -265,12 +265,48 @@ void select_sort(int a[], int n)
             swap(a[i], a[min]);
     }
 }
-
-void BuildMaxHeap(int a[], int n)
+/* 
+    核心思想：
+    用三个指针，p1指向第一个数组的头，p2指向第二个数组的头，p3指向缓冲数组的头
+    然后逐个比较p1和p2指向的元素大小，记pmin = min{p1, p2}，pmin指向元素赋给p3，pmin++，p3++
+    循环终止条件是p1或p2有一个遍历到终点
+    直接再加两个循环，while(p1 <= length1) 复制，while(p2 <= length2) 复制
+    由于我们没有保存循环终止时p1和p2的值，所以不知道是哪个数组遍历到终点了
+    折中的方案是最开始记录第一个数组和第二个数组元素个数之和
+    RightEnd一直没有修改过，从RightEnd开始从后向前遍历，逐个覆盖原数组，成有序数组 
+ */
+void Merge(int a[], int tmpa[], int L, int R, int RightEnd)
 {
-    for (int i = n / 2; i > 0; i++) // 对有孩子节点的节点调整
+    int LeftEnd = R - 1;
+    int tmp = L;
+    int NumElements = RightEnd - L + 1;
+    while (L <= LeftEnd && R <= RightEnd)
     {
-        HeapAdjust(a, i, n);
+        if (a[L] <= a[R])
+            tmpa[tmp++] = a[L++];
+        else
+            tmpa[tmp++] = a[R++];
+    }
+    while (L <= LeftEnd)
+        tmpa[tmp++] = a[L++];
+    while (R <= RightEnd)
+        tmpa[tmp++] = a[R++];
+    for (int i = 0; i < NumElements; i++, RightEnd--)
+        a[RightEnd] = tmpa[RightEnd];
+}
+
+/* 
+    类似二分法，其实就是二分递归，递归到边界之后再归并回来
+ */
+void MSort(int a[], int tmpa[], int L, int RightEnd)
+{
+    int Center;
+    if (L < RightEnd)
+    {
+        Center = (L + RightEnd) / 2;
+        MSort(a, tmpa, L, Center);
+        MSort(a, tmpa, Center + 1, RightEnd);
+        Merge(a, tmpa, L, Center + 1, RightEnd); // 注意这里是Center+1开始
     }
 }
 
@@ -292,9 +328,50 @@ void HeapAdjust(int a[], int k, int n) // 将元素k为根的子树进行调整
     a[k] = a[0];
 }
 
-void PercDown(int a[], int i, int n)
+void BuildMaxHeap(int a[], int n)
 {
-    
+    for (int i = n / 2; i > 0; i++) // 对有孩子节点的节点调整
+    {
+        HeapAdjust(a, i, n);
+    }
+}
+
+#define LeftChild(i) (2 * (i) + 1)
+
+void Swap(int &a, int &b)
+{
+    int tmp = a;
+    a = b;
+    b = tmp;
+}
+
+void PercDown(int A[], int i, int N)
+{
+    int Child;
+    int Tmp;
+    for (Tmp = A[i]; LeftChild(i) < N; i = Child)
+    {
+        Child = LeftChild(i);
+        if (Child != N - 1 && A[Child + 1] > A[Child])
+            Child++; //让Child为孩子节点中较大的
+        if (Tmp < A[Child])
+            A[i] = A[Child]; //下滤，将较大的孩子节点上移
+        else
+            break;
+    }
+    A[i] = Tmp;
+}
+
+void Heapsort(int A[], int N)
+{
+    int i;
+    for (i = N / 2; i >= 0; i--) /* BuildHeap */
+        PercDown(A, i, N);
+    for (i = N - 1; i > 0; i--)
+    {
+        Swap(A[0], A[i]); /* DeleteMax */
+        PercDown(A, 0, i);
+    }
 }
 
 // 双向冒泡排序
@@ -367,6 +444,6 @@ int wangdao8_6(int a[], int low, int high, int k)
         return a[low];
     else if (low > k)
         return wangdao8_6(a, low_temp, low - 1, k);
-    else if (low < k)
+    else // if (low < k)
         return wangdao8_6(a, low + 1, high_temp, k);
 }

@@ -62,6 +62,8 @@ int main()
     //     p = p->right;
     // }
 
+    cout << maxDepth(root);
+
     cout << endl;
     system("pause");
     return 0;

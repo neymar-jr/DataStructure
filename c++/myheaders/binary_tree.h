@@ -777,19 +777,30 @@ Binary_Tree<E> *wangdao5_16(Binary_Tree<E> *root)
 // 判断二叉树是否相似
 // 总结：写树的递归的时候注意，自底向上先考虑单节点或者空的最基本情况，然后考虑一个三节点树的情况。
 // 类似数学归纳法，n=1和n=2成立，且子过程相同，所以对整个树都成立。
-template<class E>
-bool wangdao5_17(Binary_Tree<E>* root1, Binary_Tree<E>* root2){
+template <class E>
+bool wangdao5_17(Binary_Tree<E> *root1, Binary_Tree<E> *root2)
+{
     int leftS, rightS;
-    if(!root1 && !root2)    return true;        // 两树为空
-    if(!root1 || !root2) return false;     // 单树为空
-    leftS = wangdao5_17(root1->left, root2->right);     // dfs遍历树
+    if (!root1 && !root2)
+        return true; // 两树为空
+    if (!root1 || !root2)
+        return false;                               // 单树为空
+    leftS = wangdao5_17(root1->left, root2->right); // dfs遍历树
     rightS = wangdao5_17(root1->right, root2->right);
     return leftS && rightS;
 }
 
-template<class E>
-int wangdao5_19(Binary_Tree<E>* root, int &sum){
-    if(!root) return 0;
+template <class E>
+int wangdao5_19(Binary_Tree<E> *root, int &sum)
+{
+    if (!root)
+        return 0;
     wangdao5_19(root->left, sum + root->val);
     wangdao5_19(root->right, sum + root->val);
+}
+
+template <class E>
+int maxDepth(Binary_Tree<E> *root)
+{
+    return root? 1 + max(maxDepth(root->left), maxDepth(root->right)): 0;
 }
