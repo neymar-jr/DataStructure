@@ -1,4 +1,4 @@
-#include "heap.h"
+#include "heap_di.h"
 #include "disjoint_set.h"
 
 #define MAX_NODE_NUMBER MAX_HEAP_SIZE   // 最大结点数

@@ -1,6 +1,6 @@
 #include <iostream>
 #define leftchild(i) (2 * (i) + 1)
-#define MAX_SIZE  100
+#define MAX_SIZE 100
 using namespace std;
 
 void swap(int &a, int &b)
@@ -181,17 +181,6 @@ int partition(int a[], int low, int high)
     int pivotkey;
     int mid = low + (high - low) / 2;
 
-    /* 着重分析一下三数排序。（先确定最小值，剩下两个一比较就能确定第二大还是第三大了）
-    核心思想是先通过a[mid]和a[low]，a[mid]和a[high]的比较和交换,使a[mid]是三数中最小值
-    最后只需要比较a[low]和a[high]，把较小的值放在a[low]，三个数大小顺序就是2，1，3
-    */
-    if (a[mid] > a[low])
-        swap(a[mid], a[low]);
-    if (a[mid] > a[high])
-        swap(a[mid], a[high]);
-    if (a[low] > a[high])
-        swap(a[low], a[high]);
-
     pivotkey = a[low]; /* 用子表的第一个记录作枢纽记录 */
     while (low < high) /* 从表的两端交替向中间扫描 */
     {
@@ -212,6 +201,11 @@ int partition_optimize(int a[], int low, int high)
     int pivotkey;
     int tmp;
     int mid = low + (high - low) / 2;
+
+    /* 着重分析一下三数排序。（先确定最小值，剩下两个一比较就能确定第二大还是第三大了）
+    核心思想是先通过a[mid]和a[low]，a[mid]和a[high]的比较和交换,使a[mid]是三数中最小值
+    最后只需要比较a[low]和a[high]，把较小的值放在a[low]，三个数大小顺序就是2，1，3
+    */
 
     if (a[mid] > a[low])
         swap(a[mid], a[low]);
@@ -240,7 +234,7 @@ void qsort(int a[], int low, int high)
     int pivot;
     if (low < high)
     {
-        pivot = partition_optimize(a, low, high);
+        pivot = partition(a, low, high);
 
         qsort(a, low, pivot - 1);
         qsort(a, pivot + 1, high);
@@ -250,6 +244,36 @@ void qsort(int a[], int low, int high)
 void quick_sort(int a[], int n)
 {
     qsort(a, 0, n - 1);
+}
+
+void quick_sort_clean(int a[], int left, int right)
+{
+    if (left > right)   //递归边界别忘了
+        return;
+
+    int pivot;
+    int i, j;
+
+    pivot = a[left];
+    i = left;
+    j = right - 1;
+
+    swap(a[left], a[right]); //枢纽元即第一个元素与最后一个元素交换，使得枢纽元离开要被分割的数据段
+    for (;;)
+    {
+        while (a[i] < pivot)
+            i++;
+        while (a[j] > pivot)
+            j--;
+        if (i < j)
+            swap(a[i], a[j]);
+        else
+            break;
+    }
+    swap(a[i], a[right]);   //把枢纽元放到最终有序数组的位置即i的位置
+
+    quick_sort_clean(a, left, i - 1);   //i位置确定，左递归右递归
+    quick_sort_clean(a, i + 1, right);
 }
 
 void select_sort(int a[], int n)
@@ -330,27 +354,27 @@ void merge(int a[], int TmpArray[], int Lpos, int Rpos, int RightEnd)
     NumElements = RightEnd - Lpos + 1;
 
     /* main loop */
-    while(Lpos <= LeftEnd && Rpos <= RightEnd)
-        if(a[Lpos] <= a[Rpos])
+    while (Lpos <= LeftEnd && Rpos <= RightEnd)
+        if (a[Lpos] <= a[Rpos])
             TmpArray[TmpPos++] = a[Lpos++];
         else
             TmpArray[TmpPos++] = a[Rpos++];
 
-        while( Lpos <= LeftEnd )  /* Copy rest of first half */
-            TmpArray[ TmpPos++ ] = a[ Lpos++ ];
-        while( Rpos <= RightEnd ) /* Copy rest of second half */
-            TmpArray[ TmpPos++ ] = a[ Rpos++ ];
+    while (Lpos <= LeftEnd) /* Copy rest of first half */
+        TmpArray[TmpPos++] = a[Lpos++];
+    while (Rpos <= RightEnd) /* Copy rest of second half */
+        TmpArray[TmpPos++] = a[Rpos++];
 
-        /* Copy TmpArray back */
-        for( i = 0; i < NumElements; i++, RightEnd-- )
-            a[ RightEnd ] = TmpArray[ RightEnd ];
+    /* Copy TmpArray back */
+    for (i = 0; i < NumElements; i++, RightEnd--)
+        a[RightEnd] = TmpArray[RightEnd];
 }
 
 void msort(int a[], int TmpArray[], int left, int right)
 {
     int center;
 
-    if(left < right)
+    if (left < right)
     {
         center = (left + right) / 2;
         msort(a, TmpArray, left, center);
@@ -361,8 +385,8 @@ void msort(int a[], int TmpArray[], int left, int right)
 
 void merge_sort(int a[], int n)
 {
-    int* TmpArray = new int[MAX_SIZE]; 
-    msort(a, TmpArray, 0, n-1);
+    int *TmpArray = new int[MAX_SIZE];
+    msort(a, TmpArray, 0, n - 1);
     delete[] TmpArray;
 }
 

@@ -13,10 +13,10 @@ int main()
     
     // bubble_sort(a, n);
     // insert_sort(a, n);
-    insert_sort_clean(a, n);
+    // insert_sort_clean(a, n);
     // insert_sort_bin(a, n);
     // shell_sort(a, n);
-    quick_sort(a, n);
+    quick_sort_clean(a, 0, n-1);
 
     for (int i = 0; i < n; i++)
     {
