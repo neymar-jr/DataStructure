@@ -38,7 +38,7 @@ void insert_sort_clean(int a[], int n)
     for (int i = 1; i < n; i++)
     {
         tmp = a[i];
-        for (j = i; j > 0 && a[j - 1] > tmp; j--) // 注意边界条件，是j-1 >= 0，即j > 0
+        for (j = i; j - 1 >= 0 && a[j - 1] > tmp; j--) // 注意边界条件，是j-1 >= 0，即j > 0
             a[j] = a[j - 1];
         a[j] = tmp;
     }
@@ -130,11 +130,13 @@ void bubble_sort(int a[], int n)
     }
 }
 
+/* 每次把最小的元素交换到数组左边 */
+/* 总共迭代n-1次，最后一个元素也就确定了 */
 void bubble_sort_clean(int a[], int n)
 {
     int i, j;
     bool flag = true;
-    for (i = 1; i < n && flag; i++) /* 如果flag为true则退出循环 */
+    for (i = 0; i < n - 1 && flag; i++) /* 如果flag为true则退出循环 */
     {
         flag = false; /* 初始为false */
         for (j = n - 1; j > i; j--)
@@ -143,34 +145,6 @@ void bubble_sort_clean(int a[], int n)
             {
                 swap(a[j - 1], a[j]);
                 flag = true; /* 如果有数据交换，则flag为true */
-            }
-        }
-    }
-}
-
-void bubble_sort_init1(int a[], int n)
-{
-    int i, j;
-    for (int i = 0; i < n; i++)
-    {
-        for (int j = i + 1; j < n; j++)
-        {
-            if (a[i] > a[j])
-                swap(a[i], a[j]);
-        }
-    }
-}
-
-void bubble_sort_init2(int a[], int n)
-{
-    int i, j;
-    for (int i = 0; i < n; i++)
-    {
-        for (int j = n - 2; j >= i; j--)
-        {
-            if (a[j] > a[j + 1])
-            {
-                swap(a[j], a[j + 1]);
             }
         }
     }

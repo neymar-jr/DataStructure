@@ -1,4 +1,4 @@
-#include "heap.h"
+#include "heap_di.h"
 
 // 插入排序
 template<class E>
