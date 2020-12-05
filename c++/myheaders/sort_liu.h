@@ -285,23 +285,23 @@ void percdown_maxroot(int a[], int i, int n)
     a[i] = tmp;
 }
 
-// 建小根堆，下滤
+// 建小根堆，下滤(下滤是指把元素往下层赋值)
 void percdown_minroot(int a[], int i, int n)
 {
     int child;
     int tmp;
     // 从最后一个有孩子的节点开始调整
-    for (tmp = a[i]; leftchild(i) < n; i = child)
+    for (tmp = a[i]; leftchild(i) < n; i = child)   // 下滤到合适位置
     {
         child = leftchild(i);
-        if (child != n - 1 && a[child + 1] < a[child]) // 双孩子情况下选中较大孩子
+        if (child != n - 1 && a[child + 1] < a[child]) // 双孩子情况下选中较小孩子
             child++;
         if (tmp > a[child])
             a[i] = a[child];
         else
             break;
     }
-    a[i] = tmp;
+    a[i] = tmp; // 填入下滤找到的位置
 }
 
 void heap_sort(int a[], int n)
@@ -314,8 +314,8 @@ void heap_sort(int a[], int n)
     }
     for (i = n - 1; i > 0; i--) /* DeleteMax */
     {
-        swap(a[0], a[i]);
-        percdown_minroot(a, 0, i);
+        swap(a[0], a[i]);   // 堆顶最小值和最后一个元素交换
+        percdown_minroot(a, 0, i);  // 调整堆，保证堆顶最小，每次i都是堆最后一个节点
     }
 }
 
