@@ -297,7 +297,7 @@ void percdown_minroot(int a[], int i, int n)
         if (child != n - 1 && a[child + 1] < a[child]) // 双孩子情况下选中较小孩子
             child++;
         if (tmp > a[child])
-            a[i] = a[child];
+            a[i] = a[child];    // 由于当前节点由tmp缓存了，所以不担心当前值被覆盖
         else
             break;
     }
