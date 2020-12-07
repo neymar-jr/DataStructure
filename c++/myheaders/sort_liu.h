@@ -1,4 +1,6 @@
 #include <iostream>
+#define leftchild(i) (2 * (i) + 1)
+#define MAX_SIZE 100
 using namespace std;
 
 void swap(int &a, int &b)
@@ -36,7 +38,7 @@ void insert_sort_clean(int a[], int n)
     for (int i = 1; i < n; i++)
     {
         tmp = a[i];
-        for (j = i; j > 0 && a[j - 1] > tmp; j--) // 注意边界条件，是j-1 >= 0，即j > 0
+        for (j = i; j - 1 >= 0 && a[j - 1] > tmp; j--) // 注意边界条件，是j-1 >= 0，即j > 0
             a[j] = a[j - 1];
         a[j] = tmp;
     }
@@ -128,11 +130,13 @@ void bubble_sort(int a[], int n)
     }
 }
 
+/* 每次把最小的元素交换到数组左边 */
+/* 总共迭代n-1次，最后一个元素也就确定了 */
 void bubble_sort_clean(int a[], int n)
 {
     int i, j;
     bool flag = true;
-    for (i = 0; i < n && flag; i++) /* 如果flag为true则退出循环 */
+    for (i = 0; i < n - 1 && flag; i++) /* 如果flag为true则退出循环 */
     {
         flag = false; /* 初始为false */
         for (j = n - 1; j > i; j--)
@@ -146,49 +150,10 @@ void bubble_sort_clean(int a[], int n)
     }
 }
 
-void bubble_sort_init1(int a[], int n)
-{
-    int i, j;
-    for (int i = 0; i < n; i++)
-    {
-        for (int j = i + 1; j < n; j++)
-        {
-            if (a[i] > a[j])
-                swap(a[i], a[j]);
-        }
-    }
-}
-
-void bubble_sort_init2(int a[], int n)
-{
-    int i, j;
-    for (int i = 0; i < n; i++)
-    {
-        for (int j = n - 2; j >= i; j--)
-        {
-            if (a[j] > a[j + 1])
-            {
-                swap(a[j], a[j + 1]);
-            }
-        }
-    }
-}
-
 int partition(int a[], int low, int high)
 {
     int pivotkey;
     int mid = low + (high - low) / 2;
-
-    /* 着重分析一下三数排序。（先确定最小值，剩下两个一比较就能确定第二大还是第三大了）
-    核心思想是先通过a[mid]和a[low]，a[mid]和a[high]的比较和交换,使a[mid]是三数中最小值
-    最后只需要比较a[low]和a[high]，把较小的值放在a[low]，三个数大小顺序就是2，1，3
-    */
-    if (a[mid] > a[low])
-        swap(a[mid], a[low]);
-    if (a[mid] > a[high])
-        swap(a[mid], a[high]);
-    if (a[low] > a[high])
-        swap(a[low], a[high]);
 
     pivotkey = a[low]; /* 用子表的第一个记录作枢纽记录 */
     while (low < high) /* 从表的两端交替向中间扫描 */
@@ -210,6 +175,11 @@ int partition_optimize(int a[], int low, int high)
     int pivotkey;
     int tmp;
     int mid = low + (high - low) / 2;
+
+    /* 着重分析一下三数排序。（先确定最小值，剩下两个一比较就能确定第二大还是第三大了）
+    核心思想是先通过a[mid]和a[low]，a[mid]和a[high]的比较和交换,使a[mid]是三数中最小值
+    最后只需要比较a[low]和a[high]，把较小的值放在a[low]，三个数大小顺序就是2，1，3
+    */
 
     if (a[mid] > a[low])
         swap(a[mid], a[low]);
@@ -238,7 +208,7 @@ void qsort(int a[], int low, int high)
     int pivot;
     if (low < high)
     {
-        pivot = partition_optimize(a, low, high);
+        pivot = partition(a, low, high);
 
         qsort(a, low, pivot - 1);
         qsort(a, pivot + 1, high);
@@ -248,6 +218,36 @@ void qsort(int a[], int low, int high)
 void quick_sort(int a[], int n)
 {
     qsort(a, 0, n - 1);
+}
+
+void quick_sort_clean(int a[], int left, int right)
+{
+    if (left > right)   //递归边界别忘了
+        return;
+
+    int pivot;
+    int i, j;
+
+    pivot = a[left];
+    i = left;
+    j = right - 1;
+
+    swap(a[left], a[right]); //枢纽元即第一个元素与最后一个元素交换，使得枢纽元离开要被分割的数据段
+    for (;;)
+    {
+        while (a[i] < pivot)
+            i++;
+        while (a[j] > pivot)
+            j--;
+        if (i < j)
+            swap(a[i], a[j]);
+        else
+            break;
+    }
+    swap(a[i], a[right]);   //把枢纽元放到最终有序数组的位置即i的位置
+
+    quick_sort_clean(a, left, i - 1);   //i位置确定，左递归右递归
+    quick_sort_clean(a, i + 1, right);
 }
 
 void select_sort(int a[], int n)
@@ -310,40 +310,105 @@ void MSort(int a[], int tmpa[], int L, int RightEnd)
     }
 }
 
-void HeapAdjust(int a[], int k, int n) // 将元素k为根的子树进行调整
+void merge(int a[], int TmpArray[], int Lpos, int Rpos, int RightEnd)
 {
-    a[0] = a[k];
-    for (int i = 2 * k; i <= n; i *= 2)
-    {
-        if (i < n && a[i] < a[i + 1])
-            i++;
-        if (a[0] >= a[i]) // 已经是大根堆，无需调整
-            break;
+    int i, LeftEnd, NumElements, TmpPos;
+
+    LeftEnd = Rpos - 1;
+    TmpPos = Lpos;
+    NumElements = RightEnd - Lpos + 1;
+
+    /* main loop */
+    while (Lpos <= LeftEnd && Rpos <= RightEnd)
+        if (a[Lpos] <= a[Rpos])
+            TmpArray[TmpPos++] = a[Lpos++];
         else
-        {
-            a[k] = a[i];
-            k = i;
-        }
-    }
-    a[k] = a[0];
+            TmpArray[TmpPos++] = a[Rpos++];
+
+    while (Lpos <= LeftEnd) /* Copy rest of first half */
+        TmpArray[TmpPos++] = a[Lpos++];
+    while (Rpos <= RightEnd) /* Copy rest of second half */
+        TmpArray[TmpPos++] = a[Rpos++];
+
+    /* Copy TmpArray back */
+    for (i = 0; i < NumElements; i++, RightEnd--)
+        a[RightEnd] = TmpArray[RightEnd];
 }
 
-void BuildMaxHeap(int a[], int n)
+void msort(int a[], int TmpArray[], int left, int right)
 {
-    for (int i = n / 2; i > 0; i++) // 对有孩子节点的节点调整
+    int center;
+
+    if (left < right)
     {
-        HeapAdjust(a, i, n);
+        center = (left + right) / 2;
+        msort(a, TmpArray, left, center);
+        msort(a, TmpArray, center + 1, right);
+        merge(a, TmpArray, left, center + 1, right);
+    }
+}
+
+void merge_sort(int a[], int n)
+{
+    int *TmpArray = new int[MAX_SIZE];
+    msort(a, TmpArray, 0, n - 1);
+    delete[] TmpArray;
+}
+
+// 建大根堆，下滤
+void percdown_maxroot(int a[], int i, int n)
+{
+    int child;
+    int tmp;
+    // 从最后一个有孩子的节点开始调整
+    for (tmp = a[i]; leftchild(i) < n; i = child)
+    {
+        child = leftchild(i);
+        if (child != n - 1 && a[child + 1] > a[child]) // 双孩子情况下选中较大孩子
+            child++;
+        if (tmp < a[child])
+            a[i] = a[child];
+        else
+            break;
+    }
+    a[i] = tmp;
+}
+
+// 建小根堆，下滤
+void percdown_minroot(int a[], int i, int n)
+{
+    int child;
+    int tmp;
+    // 从最后一个有孩子的节点开始调整
+    for (tmp = a[i]; leftchild(i) < n; i = child)
+    {
+        child = leftchild(i);
+        if (child != n - 1 && a[child + 1] < a[child]) // 双孩子情况下选中较大孩子
+            child++;
+        if (tmp > a[child])
+            a[i] = a[child];
+        else
+            break;
+    }
+    a[i] = tmp;
+}
+
+void heap_sort(int a[], int n)
+{
+    int i;
+
+    for (i = n / 2 - 1; i >= 0; i--) /* BuildHeap */
+    {
+        percdown_minroot(a, i, n);
+    }
+    for (i = n - 1; i > 0; i--) /* DeleteMax */
+    {
+        swap(a[0], a[i]);
+        percdown_minroot(a, 0, i);
     }
 }
 
 #define LeftChild(i) (2 * (i) + 1)
-
-void Swap(int &a, int &b)
-{
-    int tmp = a;
-    a = b;
-    b = tmp;
-}
 
 void PercDown(int A[], int i, int N)
 {
@@ -369,7 +434,7 @@ void Heapsort(int A[], int N)
         PercDown(A, i, N);
     for (i = N - 1; i > 0; i--)
     {
-        Swap(A[0], A[i]); /* DeleteMax */
+        swap(A[0], A[i]); /* DeleteMax */
         PercDown(A, 0, i);
     }
 }

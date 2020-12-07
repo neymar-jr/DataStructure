@@ -284,7 +284,7 @@ void postorder_one_stack(void (*visit)(Binary_Tree<E> *), Binary_Tree<E> *root)
             pre = cur;
             cur = NULL; // 相当于让下次循环直接进入回溯过程，为了跳过下一次循环的访问左子节点的过程，直接进入栈的弹出阶段，因为但凡在栈中的节点，它们的左子节点都肯定被经过且已放入栈中。
         }
-        else
+        else //这种情况下即，cur当前节点有右孩子而且尚未访问
         {
             cur = cur->right; // 经过右孩子节点，因为开始的循环已经使当前节点没有左孩子了
         }
@@ -802,5 +802,5 @@ int wangdao5_19(Binary_Tree<E> *root, int &sum)
 template <class E>
 int maxDepth(Binary_Tree<E> *root)
 {
-    return root? 1 + max(maxDepth(root->left), maxDepth(root->right)): 0;
+    return root ? 1 + max(maxDepth(root->left), maxDepth(root->right)) : 0;
 }
