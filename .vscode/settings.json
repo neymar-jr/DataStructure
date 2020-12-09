@@ -2,6 +2,12 @@
     "files.associations": {
         "stack": "cpp",
         "vector": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "algorithm": "cpp",
+        "xhash": "cpp",
+        "xtree": "cpp",
+        "xutility": "cpp",
+        "queue": "cpp",
+        "xiosbase": "cpp"
     }
 }
