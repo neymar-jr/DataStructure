@@ -16,7 +16,8 @@ int main()
     // insert_sort_clean(a, n);
     // insert_sort_bin(a, n);
     // shell_sort(a, n);
-    quick_sort_clean(a, 0, n-1);
+    // quick_sort_clean(a, 0, n-1);
+    heap_sort(a, n);
 
     for (int i = 0; i < n; i++)
     {

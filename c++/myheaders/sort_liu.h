@@ -153,7 +153,7 @@ void bubble_sort_clean(int a[], int n)
 int partition(int a[], int low, int high)
 {
     int pivotkey;
-    int mid = low + (high - low) / 2;
+    int mid = low + (high - low) / 2; //或者(low + high) / 2
 
     pivotkey = a[low]; /* 用子表的第一个记录作枢纽记录 */
     while (low < high) /* 从表的两端交替向中间扫描 */
@@ -266,8 +266,8 @@ void select_sort(int a[], int n)
     }
 }
 
-// 建大根堆，下滤
-void percdown_maxroot(int a[], int i, int n)
+// 建小根堆，下滤
+void percdown_minroot(int a[], int i, int n)
 {
     int child;
     int tmp;
@@ -285,8 +285,8 @@ void percdown_maxroot(int a[], int i, int n)
     a[i] = tmp;
 }
 
-// 建小根堆，下滤(下滤是指把元素往下层赋值)
-void percdown_minroot(int a[], int i, int n)
+// 建大根堆，下滤(下滤是指把元素往下层赋值)
+void percdown_maxroot(int a[], int i, int n)
 {
     int child;
     int tmp;
@@ -294,7 +294,7 @@ void percdown_minroot(int a[], int i, int n)
     for (tmp = a[i]; leftchild(i) < n; i = child)   // 下滤到合适位置
     {
         child = leftchild(i);
-        if (child != n - 1 && a[child + 1] < a[child]) // 双孩子情况下选中较小孩子
+        if (child != n - 1 && a[child + 1] < a[child])  // 双孩子情况下选中较小孩子
             child++;
         if (tmp > a[child])
             a[i] = a[child];    // 由于当前节点由tmp缓存了，所以不担心当前值被覆盖
@@ -310,12 +310,12 @@ void heap_sort(int a[], int n)
 
     for (i = n / 2 - 1; i >= 0; i--) /* BuildHeap */
     {
-        percdown_minroot(a, i, n);
+        percdown_maxroot(a, i, n);
     }
     for (i = n - 1; i > 0; i--) /* DeleteMax */
     {
         swap(a[0], a[i]);   // 堆顶最小值和最后一个元素交换
-        percdown_minroot(a, 0, i);  // 调整堆，保证堆顶最小，每次i都是堆最后一个节点
+        percdown_maxroot(a, 0, i);  // 调整堆，保证堆顶最小，每次i都是堆最后一个节点
     }
 }
 
