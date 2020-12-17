@@ -127,6 +127,31 @@ int f5(TreeNode* root){
     return max_width;
 }
 
+int f5_clean(TreeNode *root)
+{
+    if(!root)
+        return 0;
+    int max = 0;
+    queue<TreeNode*> Q;
+    Q.push(root);
+    while(!Q.empty())
+    {
+        int count = Q.size();
+        if(count > max)
+            max = count;
+        for(int i = 0; i < count; i++)
+        {
+            TreeNode* cur = Q.front();
+            Q.pop();
+            if(cur->left)
+                Q.push(cur->left);
+            if(cur->right)
+                Q.push(cur->right);
+        }
+    }
+    return max;
+}
+
 // 从二叉树中删去所有叶节点
 
 

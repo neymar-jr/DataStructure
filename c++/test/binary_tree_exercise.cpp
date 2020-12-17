@@ -27,8 +27,8 @@ int main()
     // cout << f3(root);
     // cout << f4(root);
     // cout << f5(root);
-    f6(root);
-    dfs(root);
+    cout << f5_clean(root);
+    // dfs(root);
     
     cout << endl;
     system("pause");

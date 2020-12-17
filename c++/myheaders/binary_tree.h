@@ -46,12 +46,32 @@ void visit(Binary_Tree<E> *p)
 */
 
 template <class E>
-void preorder(void (*visit)(Binary_Tree<E> *), Binary_Tree<E> *root)
+void preorder_clean(void (*visit)(Binary_Tree<E> *), Binary_Tree<E> *root)
 {
+    if(!root)
+        return;
     stack<Binary_Tree<E> *> s;
-    Binary_Tree<E> *p = root;
+    s.push(root);
+    while(!s.empty())
+    {
+        Binary_Tree<E> *tmp = s.top();
+        s.pop();
+        visit(tmp);
+        if(tmp->right)
+            s.push(tmp->right);
+        if(tmp->left)
+            s.push(tmp->left);
+    }
+}
+
+
+template <class E>
+void preorder_wangdao(void (*visit)(Binary_Tree<E> *), Binary_Tree<E> *root)
+{
     if (!root)
         return;
+    stack<Binary_Tree<E> *> s;
+    Binary_Tree<E> *p = root;
     while (p || !s.empty())
     {
         if (p)
@@ -79,13 +99,13 @@ void preorder_sparrow(void (*visit)(Binary_Tree<E> *bt), Binary_Tree<E> *root)
     while (p != NULL)
     {
         visit(p);
-        if (p->rchild) //如果有未访问的岔路口，入栈保存
+        if (p->right) //如果有未访问的岔路口，入栈保存
         {
-            s.push(p->rchild);
+            s.push(p->right);
         }
-        if (p->lchild)
+        if (p->left)
         {
-            p = p->lchild;
+            p = p->left;
         }
         else
         {
@@ -218,13 +238,13 @@ void postorder_two_stack_sparrow(void (*visit)(Binary_Tree<E> *bt), Binary_Tree<
     while (p)
     {
         output.push(p);
-        if (p->lchild)
+        if (p->left)
         {
-            s.push(p->lchild);
+            s.push(p->left);
         }
-        if (p->rchild)
+        if (p->right)
         {
-            p = p->rchild;
+            p = p->right;
         }
         else
         {
@@ -325,6 +345,10 @@ void levelorder(void (*visit)(Binary_Tree<E> *), Binary_Tree<E> *root)
         }
     }
 }
+
+// leetcode 637 Average of Levels in Binary Tree
+
+
 
 //5.4
 template <class E>

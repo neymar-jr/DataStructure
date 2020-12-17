@@ -20,6 +20,8 @@ int main()
     root->right->right = new Binary_Tree<int>(7);
     root->right->right->right = new Binary_Tree<int>(8);
 
+    preorder_sparrow(visit, root);
+
     // cout << wangdao5_5(visit, root);
 
     // vector<int> preorder, inorder;
@@ -62,7 +64,7 @@ int main()
     //     p = p->right;
     // }
 
-    cout << maxDepth(root);
+    // cout << maxDepth(root);
 
     cout << endl;
     system("pause");
