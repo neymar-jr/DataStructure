@@ -20,6 +20,9 @@ int main()
     root->right->right = new Binary_Tree<int>(7);
     root->right->right->right = new Binary_Tree<int>(8);
 
+    // postorder_with_flag(visit, root);
+    cout << Is_Complete_Binary_Tree(root);
+
     // cout << wangdao5_5(visit, root);
 
     // vector<int> preorder, inorder;

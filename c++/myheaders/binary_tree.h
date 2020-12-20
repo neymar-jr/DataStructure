@@ -13,6 +13,7 @@ public:
     E val;
     Binary_Tree *left;
     Binary_Tree *right;
+    int flag;
 
     Binary_Tree(E e);
     ~Binary_Tree();
@@ -24,6 +25,7 @@ Binary_Tree<E>::Binary_Tree(E e)
     val = e;
     left = NULL;
     right = NULL;
+    flag = 0;
 }
 
 template <class E>
@@ -289,6 +291,69 @@ void postorder_one_stack(void (*visit)(Binary_Tree<E> *), Binary_Tree<E> *root)
             cur = cur->right; // 经过右孩子节点，因为开始的循环已经使当前节点没有左孩子了
         }
     }
+}
+
+template <class E>
+void postorder_with_flag(void (*visit)(Binary_Tree<E> *), Binary_Tree<E> *root)
+{
+    if (!root)
+        return;
+    stack<Binary_Tree<E> *> s;
+    s.push(root);
+
+    while (!s.empty())
+    {
+        if (s.top()->flag == 0)
+        {
+            s.top()->flag++;
+            if (s.top()->left)
+                s.push(s.top()->left);
+        }
+        else if (s.top()->flag == 1)
+        {
+            s.top()->flag++;
+            if (s.top()->right)
+                s.push(s.top()->right);
+        }
+        else    //flag = 2说明左右孩子都访问完了
+        {
+            visit(s.top());
+            s.pop();
+        }
+    }
+}
+
+/* 
+算法思想：
+可以通过层序遍历的方法来解决。不管当前结点是否有左，右孩子，都入队列。
+这样当树为完全二叉树时，遍历时得到是一个连续的不包含空指针的序列。
+反之，则序列中会含有空指针。
+ */
+
+template <class E>
+bool Is_Complete_Binary_Tree(Binary_Tree<E> *root)
+{
+    if (!root)
+        return true;
+    queue<Binary_Tree<E> *> Q;
+    int flag = 0;
+    Binary_Tree<E> *p;
+    Q.push(root);
+    while (!Q.empty())
+    {
+        p = Q.front();
+        Q.pop();
+        if (!p)
+            flag = 1;   // 出现空指针则开始判断
+        else if (flag)  // 如果当前队列为空，则说明是完全二叉树
+            return false;   // 如果当前队列不空，则说明后面还有未访问节点，不是完全二叉树
+        else
+        {
+            Q.push(p->left);
+            Q.push(p->right);
+        }
+    }
+    return true;
 }
 
 template <class E>
@@ -777,19 +842,24 @@ Binary_Tree<E> *wangdao5_16(Binary_Tree<E> *root)
 // 判断二叉树是否相似
 // 总结：写树的递归的时候注意，自底向上先考虑单节点或者空的最基本情况，然后考虑一个三节点树的情况。
 // 类似数学归纳法，n=1和n=2成立，且子过程相同，所以对整个树都成立。
-template<class E>
-bool wangdao5_17(Binary_Tree<E>* root1, Binary_Tree<E>* root2){
+template <class E>
+bool wangdao5_17(Binary_Tree<E> *root1, Binary_Tree<E> *root2)
+{
     int leftS, rightS;
-    if(!root1 && !root2)    return true;        // 两树为空
-    if(!root1 || !root2) return false;     // 单树为空
-    leftS = wangdao5_17(root1->left, root2->right);     // dfs遍历树
+    if (!root1 && !root2)
+        return true; // 两树为空
+    if (!root1 || !root2)
+        return false;                               // 单树为空
+    leftS = wangdao5_17(root1->left, root2->right); // dfs遍历树
     rightS = wangdao5_17(root1->right, root2->right);
     return leftS && rightS;
 }
 
-template<class E>
-int wangdao5_19(Binary_Tree<E>* root, int &sum){
-    if(!root) return 0;
+template <class E>
+int wangdao5_19(Binary_Tree<E> *root, int &sum)
+{
+    if (!root)
+        return 0;
     wangdao5_19(root->left, sum + root->val);
     wangdao5_19(root->right, sum + root->val);
 }

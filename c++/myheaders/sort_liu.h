@@ -153,7 +153,6 @@ void bubble_sort_clean(int a[], int n)
 int partition(int a[], int low, int high)
 {
     int pivotkey;
-    int mid = low + (high - low) / 2; //或者(low + high) / 2
 
     pivotkey = a[low]; /* 用子表的第一个记录作枢纽记录 */
     while (low < high) /* 从表的两端交替向中间扫描 */
@@ -181,12 +180,12 @@ int partition_optimize(int a[], int low, int high)
     最后只需要比较a[low]和a[high]，把较小的值放在a[low]，三个数大小顺序就是2，1，3
     */
 
-    if (a[mid] > a[low])
-        swap(a[mid], a[low]);
-    if (a[mid] > a[high])
-        swap(a[mid], a[high]);
-    if (a[low] > a[high])
-        swap(a[low], a[high]);
+    // if (a[mid] > a[low])
+    //     swap(a[mid], a[low]);
+    // if (a[mid] > a[high])
+    //     swap(a[mid], a[high]);
+    // if (a[low] > a[high])
+    //     swap(a[low], a[high]);
 
     pivotkey = a[low]; /* 用子表的第一个记录作枢纽记录 */
     tmp = pivotkey;
@@ -316,6 +315,52 @@ void heap_sort(int a[], int n)
     {
         swap(a[0], a[i]);   // 堆顶最小值和最后一个元素交换
         percdown_maxroot(a, 0, i);  // 调整堆，保证堆顶最小，每次i都是堆最后一个节点
+    }
+}
+
+/* 
+    核心思想：
+    用三个指针，p1指向第一个数组的头，p2指向第二个数组的头，p3指向缓冲数组的头
+    然后逐个比较p1和p2指向的元素大小，记pmin = min{p1, p2}，pmin指向元素赋给p3，pmin++，p3++
+    循环终止条件是p1或p2有一个遍历到终点
+    直接再加两个循环，while(p1 <= length1) 复制，while(p2 <= length2) 复制
+    由于我们没有保存循环终止时p1和p2的值，所以不知道是哪个数组遍历到终点了
+    折中的方案是最开始记录第一个数组和第二个数组元素个数之和
+    RightEnd一直没有修改过，从RightEnd开始从后向前遍历，逐个覆盖原数组，成有序数组 
+ */
+
+void Merge(int a[], int tmpa[], int L, int R, int RightEnd)
+{
+    int LeftEnd = R - 1;
+    int tmp = L;
+    int NumElements = RightEnd - L + 1;
+    while (L <= LeftEnd && R <= RightEnd)
+    {
+        if (a[L] <= a[R])
+            tmpa[tmp++] = a[L++];
+        else
+            tmpa[tmp++] = a[R++];
+    }
+    while (L <= LeftEnd)
+        tmpa[tmp++] = a[L++];
+    while (R <= RightEnd)
+        tmpa[tmp++] = a[R++];
+    for (int i = 0; i < NumElements; i++, RightEnd--)
+        a[RightEnd] = tmpa[RightEnd];
+}
+
+/* 
+    类似二分法，其实就是二分递归，递归到边界之后再归并回来
+ */
+void MSort(int a[], int tmpa[], int L, int RightEnd)
+{
+    int Center;
+    if (L < RightEnd)
+    {
+        Center = (L + RightEnd) / 2;
+        MSort(a, tmpa, L, Center);
+        MSort(a, tmpa, Center + 1, RightEnd);
+        Merge(a, tmpa, L, Center + 1, RightEnd); // 注意这里是Center+1开始
     }
 }
 
