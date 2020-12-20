@@ -21,7 +21,8 @@ int main()
     root->right->right->right = new Binary_Tree<int>(8);
 
     // postorder_with_flag(visit, root);
-    cout << Is_Complete_Binary_Tree(root);
+    // cout << Is_Complete_Binary_Tree(root);
+    // preorder_sparrow(visit, root);
 
     // cout << wangdao5_5(visit, root);
 
@@ -64,6 +65,8 @@ int main()
     //     cout << p->val << ' ';
     //     p = p->right;
     // }
+
+    // cout << maxDepth(root);
 
     cout << endl;
     system("pause");
