@@ -1,9 +1,6 @@
 ## Commonly used data structures implemented by C++
 
 
-
-* 栈和队列相关: infix2postfix
-* 字符串相关: kmp
 * 树相关: binary_tree, bst_tree, thread_tree, avl_tree
 * 堆相关: heap
 * 图相关: graph
