@@ -1,4 +1,4 @@
-## Commonly used data structures implemented by C++
+## 常用数据结构C++实现
 
 
 * 树相关: binary_tree, bst_tree, thread_tree, avl_tree
