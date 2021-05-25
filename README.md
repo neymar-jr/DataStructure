@@ -1,5 +1,7 @@
 ## 常用数据结构C++实现
 
+主要学习和参考[FRsparrow/data_structure](https://github.com/FRsparrow/data_structure)并做了一些注释和改动。
+
 
 * 树相关: binary_tree, bst_tree, thread_tree, avl_tree
 * 堆相关: heap
